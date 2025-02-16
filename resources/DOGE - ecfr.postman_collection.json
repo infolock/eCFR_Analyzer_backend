@@ -1,0 +1,756 @@
+{
+	"info": {
+		"_postman_id": "66362b80-e1ce-4a2d-9014-2dc070c1edc7",
+		"name": "DOGE - ecfr",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42363927"
+	},
+	"item": [
+		{
+			"name": "Agencies",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/admin/v1/agencies.json",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"admin",
+						"v1",
+						"agencies.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Corrections",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/admin/v1/corrections.json",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"admin",
+						"v1",
+						"corrections.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Corrections for Title",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/admin/v1/corrections/title/6.json",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"admin",
+						"v1",
+						"corrections",
+						"title",
+						"6.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Results",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": ""
+					}
+				],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/search/v1/results?per_page=20&page=1&order=relevance&paginate_by=results&query=Regulations",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"search",
+						"v1",
+						"results"
+					],
+					"query": [
+						{
+							"key": "agency_slugs%5B%5D",
+							"value": "test",
+							"disabled": true
+						},
+						{
+							"key": "agency_slugs%5B%5D",
+							"value": "test2",
+							"disabled": true
+						},
+						{
+							"key": "date",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_after",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_on_or_after",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_before",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_on_or_before",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "per_page",
+							"value": "20"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "order",
+							"value": "relevance"
+						},
+						{
+							"key": "paginate_by",
+							"value": "results"
+						},
+						{
+							"key": "query",
+							"value": "Regulations"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Results Count",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": ""
+					}
+				],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/search/v1/count?query=Regulations",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"search",
+						"v1",
+						"count"
+					],
+					"query": [
+						{
+							"key": "agency_slugs%5B%5D",
+							"value": "test",
+							"disabled": true
+						},
+						{
+							"key": "date",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_after",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_on_or_after",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_before",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_on_or_before",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "query",
+							"value": "Regulations"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Results Summary",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": ""
+					}
+				],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/search/v1/summary?query=Regulations",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"search",
+						"v1",
+						"summary"
+					],
+					"query": [
+						{
+							"key": "agency_slugs%5B%5D",
+							"value": "test",
+							"disabled": true
+						},
+						{
+							"key": "agency_slugs%5B%5D",
+							"value": "test2",
+							"disabled": true
+						},
+						{
+							"key": "date",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_after",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_on_or_after",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_before",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_on_or_before",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "query",
+							"value": "Regulations"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Results Counts by Date",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": ""
+					}
+				],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/search/v1/counts/daily?query=Regulations",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"search",
+						"v1",
+						"counts",
+						"daily"
+					],
+					"query": [
+						{
+							"key": "agency_slugs%5B%5D",
+							"value": "test",
+							"disabled": true
+						},
+						{
+							"key": "agency_slugs%5B%5D",
+							"value": "test2",
+							"disabled": true
+						},
+						{
+							"key": "date",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_after",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_on_or_after",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_before",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_on_or_before",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "query",
+							"value": "Regulations"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Results Counts by Titles",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": ""
+					}
+				],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/search/v1/counts/titles?query=Regulations",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"search",
+						"v1",
+						"counts",
+						"titles"
+					],
+					"query": [
+						{
+							"key": "agency_slugs%5B%5D",
+							"value": "test",
+							"disabled": true
+						},
+						{
+							"key": "agency_slugs%5B%5D",
+							"value": "test2",
+							"disabled": true
+						},
+						{
+							"key": "date",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_after",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_on_or_after",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_before",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_on_or_before",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "query",
+							"value": "Regulations"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Results Counts by Hierarchy",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": ""
+					}
+				],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/search/v1/counts/hierarchy?query=Regulations",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"search",
+						"v1",
+						"counts",
+						"hierarchy"
+					],
+					"query": [
+						{
+							"key": "agency_slugs%5B%5D",
+							"value": "test",
+							"disabled": true
+						},
+						{
+							"key": "agency_slugs%5B%5D",
+							"value": "test2",
+							"disabled": true
+						},
+						{
+							"key": "date",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_after",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_on_or_after",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_before",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_on_or_before",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "query",
+							"value": "Regulations"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Results Suggestions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": ""
+					}
+				],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/search/v1/suggestions?query=Regulations",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"search",
+						"v1",
+						"suggestions"
+					],
+					"query": [
+						{
+							"key": "agency_slugs%5B%5D",
+							"value": "test",
+							"disabled": true
+						},
+						{
+							"key": "agency_slugs%5B%5D",
+							"value": "test2",
+							"disabled": true
+						},
+						{
+							"key": "date",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_after",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_on_or_after",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_before",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "last_modified_on_or_before",
+							"value": "2025-02-10",
+							"disabled": true
+						},
+						{
+							"key": "query",
+							"value": "Regulations"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Titles",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": ""
+					}
+				],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/versioner/v1/titles.json",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"versioner",
+						"v1",
+						"titles.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Titles Versions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": ""
+					}
+				],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/versioner/v1/versions/title-2.json",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"versioner",
+						"v1",
+						"versions",
+						"title-2.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Titles Structure",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": ""
+					}
+				],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/versioner/v1/structure/2025-02-10/title-2.json",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"versioner",
+						"v1",
+						"structure",
+						"2025-02-10",
+						"title-2.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Titles Source (XML)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": ""
+					}
+				],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/versioner/v1/full/2025-02-10/title-2.xml",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"versioner",
+						"v1",
+						"full",
+						"2025-02-10",
+						"title-2.xml"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Titles Ancestry",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.ecfr.gov/api/versioner/v1/ancestry/2025-02-10/title-2.json?subtitle=B",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ecfr",
+						"gov"
+					],
+					"path": [
+						"api",
+						"versioner",
+						"v1",
+						"ancestry",
+						"2025-02-10",
+						"title-2.json"
+					],
+					"query": [
+						{
+							"key": "subtitle",
+							"value": "B"
+						},
+						{
+							"key": "chapter",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "subchapter",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "part",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "subpart",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "section",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "appendix",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

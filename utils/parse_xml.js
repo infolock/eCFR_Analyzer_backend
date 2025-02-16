@@ -2,21 +2,17 @@ import fs from 'fs';
 import xml2js from 'xml2js';
 
 const extractText = (obj) => {
-    if (typeof obj === 'string') {
+    if (typeof obj === 'string' || obj !== 'object') {
         return obj;
     }
 
     let text = '';
 
-    if (typeof obj === 'object') {
-        for (const key in obj) {
-            if (obj[key] instanceof Array) {
-                obj[key].forEach(item => {
-                    text += extractText(item);
-                });
-            } else {
-                text += extractText(obj[key]);
-            }
+    for (const key in obj) {
+        if (obj[key] instanceof Array) {
+            text += obj[key].map(extractText).join('');
+        } else {
+            text += extractText(obj[key]);
         }
     }
 
@@ -24,15 +20,13 @@ const extractText = (obj) => {
 };
 
 export const parseXML = (inputPath, outputPath, onComplete = () => {}) => {
-    const xmlFilePath = inputPath;
-    const outputFilePath = outputPath;
-
-    fs.readFile(xmlFilePath, 'utf8', (_, xmlData) => {
+    fs.readFile(inputPath, 'utf8', (_, xmlData) => {
         const parser = new xml2js.Parser();
+
         parser.parseString(xmlData, (_, result) => {
             const plainText = extractText(result);
 
-            fs.writeFile(outputFilePath, plainText.trim(), 'utf8', (err) => {
+            fs.writeFile(outputPath, plainText.trim(), 'utf8', (err) => {
                 if (err) {
                     console.error('Error:', err);
                 }
