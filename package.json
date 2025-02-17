@@ -13,6 +13,7 @@
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "express": "^4.21.2",
+    "json2csv": "^6.0.0-alpha.2",
     "neo4j-driver": "^5.28.1",
     "xml2js": "^0.6.2"
   }
