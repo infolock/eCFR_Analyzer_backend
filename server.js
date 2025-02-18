@@ -13,26 +13,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// let titleData = JSON.parse(
-//     fs.readFileSync("data/titles.json", "utf8")
-// );
-
-// function analyzeWordCounts(data) {
-//     const wordCounts = {};
-
-//     for (const title of data.titles || []) {
-//         const agency = title.agencies?.[0] || "Unknown";
-//         const text = title.description || "";
-
-//         if (!wordCounts[agency]) {
-//             wordCounts[agency] = 0;
-//         }
-//         wordCounts[agency] += text.split(/\s+/).length;
-//     }
-
-//     return wordCounts;
-// }
-
 const getTitles = async () => {
   const titleFileExists = await checkFileExistsAndHasData("titles.json");
 
@@ -83,6 +63,22 @@ app.get("/api/agencies", async (_, res) => {
   const agencyData = await getAgencies();
 
   res.json(agencyData.agencies);
+});
+
+app.get("/api/agencies/:slug", async (req, res) => {
+  const { slug } = req.params;
+  const agencyData = await getAgencies();
+  const targetAgency = agencyData.agencies.find(
+    (agency) => agency.slug === slug
+  );
+  console.log("SLUG = " + slug);
+  if (!targetAgency) {
+    return res
+      .status(404)
+      .json({ error: "Agency with specified slug was Not Found!" });
+  }
+
+  res.json(targetAgency);
 });
 
 app.get("/api/titles", async (_, res) => {

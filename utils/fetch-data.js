@@ -1,49 +1,61 @@
-import { readFileSync, promises as fs } from "fs";
+import fs from "fs";
 import axios from "axios";
 import { join, dirname } from "path";
-import { parseXML } from "./parse_xml.js";
+// import { parseXML } from "./parse_xml.js";
 import { fileURLToPath } from "url";
 
 const API_URL = "https://www.ecfr.gov/api/versioner/v1";
+const VERSIONER_API_URL = "https://www.ecfr.gov/api/versioner/v1";
 
-const checkFileExistsAndHasData = async (filename = "titles.json") => {
+const checkFileExistsAndHasData = (filename = "titles.json") => {
   const __dirname = dirname(fileURLToPath(import.meta.url));
   const filePath = join(__dirname, "../data", filename);
+  return fs.existsSync(filePath);
+  //   const __dirname = dirname(fileURLToPath(import.meta.url));
+  //   const filePath = join(__dirname, "../data", filename);
 
-  try {
-    const data = await fs.readFile(filePath, "utf8");
+  //   try {
+  //     const data = fs.readFile(filePath, "utf8");
 
-    if (data.trim().length === 0) {
-      console.log("File exists but is empty.");
-      return false;
-    }
+  //     if (!data || data.trim().length === 0) {
+  //       console.log("File exists but is empty.");
+  //       return false;
+  //     }
 
-    return true;
-  } catch (error) {
-    if (error.code === "ENOENT") {
-      console.log("File does not exist.");
-    } else {
-      console.error("Error reading file:", error);
-    }
+  //     return true;
+  //   } catch (error) {
+  //     if (error.code === "ENOENT") {
+  //       console.log("File does not exist.");
+  //     } else {
+  //       console.error("Error reading file:", error);
+  //     }
 
-    return false;
-  }
+  //     return false;
+  //   }
 };
 
 const getTitles = async () => {
-  const titleFileExists = await checkFileExistsAndHasData("titles.json");
-
-  if (titleFileExists) {
-    return JSON.parse(readFileSync("data/titles.json", "utf8"));
+  try {
+    const titleFileExists = checkFileExistsAndHasData("titles.json");
+    if (titleFileExists) {
+      return await JSON.parse(fs.readFileSync("data/titles.json", "utf8"));
+    }
+  } catch (error) {
+    console.log("Error checkFileExistsAndHasData!");
+    console.log(error);
   }
 
-  const response = await axios.get(`${VERSIONER_API_URL}/titles`);
-  return JSON.parse(JSON.stringify(response.data, null, 2));
+  try {
+    const response = await axios.get(`${VERSIONER_API_URL}/titles`);
+    return JSON.parse(JSON.stringify(response.data, null, 2));
+  } catch (error) {
+    console.log("Error fetching list of titles!");
+    console.log(error);
+  }
 };
 
 const fetchTitleContent = async (titleNumber, date = "2025-02-10") => {
   const url = `${API_URL}/full/${date}/title-${titleNumber}.xml`;
-  console.log("FETCHING URL: " + url);
   const response = await axios.get(url);
   return response.data;
 };
@@ -55,47 +67,91 @@ const fetchTitleContent = async (titleNumber, date = "2025-02-10") => {
 //   return str.split(/\s+/).length;
 // };
 
-(async () => {
-  try {
-    console.log("Fetching titles...");
+const fetchData = async () => {
+  const retryQueue = [];
 
-    const titleData = await getTitles();
+  console.log("Fetching titles...");
+  const titleData = await getTitles();
 
-    titleData.titles.forEach(async (title) => {
+  for (const title of titleData.titles) {
+    // reserved titles aren't allowed...
+    if (
+      title.reserved ||
+      checkFileExistsAndHasData(`ecfr/title-${title.number}.xml`)
+    ) {
+      console.log(
+        "Skipping fetch for " + title.number + " (" + title.name + ")"
+      );
+      continue;
+    }
+    const xmlPath = `data/ecfr/title-${title.number}.xml`;
+    try {
       const xmlData = await fetchTitleContent(
         title.number,
         title.up_to_date_as_of
       );
-      const xmlPath = `data/ecfr/title-${title.number}.xml`;
+      if (!xmlData) {
+        console.log(
+          "FAILED to fetch data for: " + title.number + " (" + title.name + ")"
+        );
+        continue;
+      }
 
-      fs.writeFileSync(`data/ecfr/title-${title.number}.xml`, xmlData);
-      parseXML(xmlPath, `data/ecfr/title-${title.number}.txt`);
-    });
-    // const firstTitle = titles[1];
-
-    //     console.log(`Processing Title ${firstTitle.number}...`);
-
-    //     const xmlData = await fetchTitleContent(firstTitle.number);
-    //     const xmlPath = `data/title-${firstTitle.number}.xml`;
-
-    //     fs.writeFileSync(`data/title-${firstTitle.number}.xml`, xmlData);
-
-    //     parseXML(xmlPath, `data/title-${firstTitle.number}.txt`, (titleData) => {
-    //       const wordCount = parseAndCountWords(titleData);
-    //       const wordCounts = [
-    //         {
-    //           title: firstTitle.number,
-    //           wordCount,
-    //         },
-    //       ];
-
-    //       fs.writeFileSync(
-    //         "data/word_counts.json",
-    //         JSON.stringify(wordCounts, null, 4)
-    //       );
-    //       console.log("Word counts saved successfully for the first title.");
-    //     });
-  } catch (error) {
-    console.error("Error fetching or processing eCFR data:", error);
+      fs.writeFileSync(xmlPath, xmlData);
+    } catch (error) {
+      console.log(
+        "Failed to fetch title: " + title.number + " (" + title.name + ")"
+      );
+      retryQueue.push(title);
+    }
   }
-})();
+  return retryQueue;
+};
+
+const MAX_RETRIES = 100;
+const download = async (currentRetry = 0) => {
+  if (currentRetry === MAX_RETRIES) {
+    return;
+  }
+
+  const retryQueue = await fetchData();
+  if (!retryQueue || !retryQueue.length) {
+    return;
+  }
+
+  // if we have retries, wait 5 seconds before we try again...
+
+  console.log("Throttle prevented all files from being download immediately.");
+  console.log("waiting 5 seconds and retrying for remaining items...");
+
+  setTimeout(async () => {
+    await download(currentRetry + 1);
+  }, 5000);
+};
+
+download();
+// const firstTitle = titles[1];
+
+//     console.log(`Processing Title ${firstTitle.number}...`);
+
+//     const xmlData = await fetchTitleContent(firstTitle.number);
+//     const xmlPath = `data/title-${firstTitle.number}.xml`;
+
+//     writeFileSync(`data/title-${firstTitle.number}.xml`, xmlData);
+
+//     parseXML(xmlPath, `data/title-${firstTitle.number}.txt`, (titleData) => {
+//       const wordCount = parseAndCountWords(titleData);
+//       const wordCounts = [
+//         {
+//           title: firstTitle.number,
+//           wordCount,
+//         },
+//       ];
+
+//       writeFileSync(
+//         "data/word_counts.json",
+//         JSON.stringify(wordCounts, null, 4)
+//       );
+//       console.log("Word counts saved successfully for the first title.");
+//     });
+// })();
