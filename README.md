@@ -13,6 +13,25 @@ The routines in this script are straight forward and self-explanataory. The key 
 
 Either way, we know we've been throttled when we get queued up requests, so we can safely retry. This will allow us to pick up where we left off.
 
+# Starting the service
+
+Pretty straight forward:
+
+- `npm install`
+- `npm start`
+
+Services will be available on port `http://localhost:5001`.
+
 # sample outputs
 
 sample outputs are in the `data` folder
+
+# key files
+
+- `server.ts` - API routes are housed here
+- `utils/fetch-data.js` - handles fetching the data that we'll need for evals
+- `utils/parse_xml.js` - needed for when we want to parse XML and convert into raw text (for analyzing word counts)
+
+# Resources
+
+There is also a `resources` folder. Here you'll find basic information for postman and other shared resources that come about.
