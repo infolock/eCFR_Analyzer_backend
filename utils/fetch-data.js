@@ -1,7 +1,6 @@
 import fs from "fs";
 import axios from "axios";
 import { join, dirname } from "path";
-// import { parseXML } from "./parse_xml.js";
 import { fileURLToPath } from "url";
 
 const API_URL = "https://www.ecfr.gov/api/versioner/v1";
@@ -11,27 +10,6 @@ const checkFileExistsAndHasData = (filename = "titles.json") => {
   const __dirname = dirname(fileURLToPath(import.meta.url));
   const filePath = join(__dirname, "../data", filename);
   return fs.existsSync(filePath);
-  //   const __dirname = dirname(fileURLToPath(import.meta.url));
-  //   const filePath = join(__dirname, "../data", filename);
-
-  //   try {
-  //     const data = fs.readFile(filePath, "utf8");
-
-  //     if (!data || data.trim().length === 0) {
-  //       console.log("File exists but is empty.");
-  //       return false;
-  //     }
-
-  //     return true;
-  //   } catch (error) {
-  //     if (error.code === "ENOENT") {
-  //       console.log("File does not exist.");
-  //     } else {
-  //       console.error("Error reading file:", error);
-  //     }
-
-  //     return false;
-  //   }
 };
 
 const getTitles = async () => {
@@ -59,13 +37,6 @@ const fetchTitleContent = async (titleNumber, date = "2025-02-10") => {
   const response = await axios.get(url);
   return response.data;
 };
-
-// Parse XML and Count Words
-// const parseAndCountWords = (data) => {
-//   const str = data.replace(/\n+/g, " ").replace("-", " ").replace(/\s+/g, " ");
-
-//   return str.split(/\s+/).length;
-// };
 
 const fetchData = async () => {
   const retryQueue = [];
@@ -130,28 +101,3 @@ const download = async (currentRetry = 0) => {
 };
 
 download();
-// const firstTitle = titles[1];
-
-//     console.log(`Processing Title ${firstTitle.number}...`);
-
-//     const xmlData = await fetchTitleContent(firstTitle.number);
-//     const xmlPath = `data/title-${firstTitle.number}.xml`;
-
-//     writeFileSync(`data/title-${firstTitle.number}.xml`, xmlData);
-
-//     parseXML(xmlPath, `data/title-${firstTitle.number}.txt`, (titleData) => {
-//       const wordCount = parseAndCountWords(titleData);
-//       const wordCounts = [
-//         {
-//           title: firstTitle.number,
-//           wordCount,
-//         },
-//       ];
-
-//       writeFileSync(
-//         "data/word_counts.json",
-//         JSON.stringify(wordCounts, null, 4)
-//       );
-//       console.log("Word counts saved successfully for the first title.");
-//     });
-// })();
