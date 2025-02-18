@@ -130,21 +130,5 @@ app.get("/api/word_counts/:agency", async (req, res) => {
   });
 });
 
-app.get("/api/word_counts/:id?", (_, res) => {
-  const { id } = req.params;
-
-  if (id) {
-    const title = titleData.find((title) => title.id === Number(id));
-    if (!title) {
-      return res.status(404).json({ error: "Title not found" });
-    }
-
-    return res.json(analyzeWordCounts(title));
-  }
-
-  const wordCounts = analyzeWordCounts(titleData);
-  res.json(wordCounts);
-});
-
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
