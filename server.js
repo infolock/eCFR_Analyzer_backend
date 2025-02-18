@@ -2,10 +2,10 @@ import express from "express";
 // import fs from "fs";
 import cors from "cors";
 import axios from "axios";
-import { readFileSync, writeFileSync, promises as fs } from "fs";
+import fs from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
-import { getWordCountForTitleChapter } from "./utils/xml-utils";
+import { getWordCountForTitleChapter } from "./utils/xml-utils.js";
 
 const ADMIN_API_URL = "https://www.ecfr.gov/api/admin/v1";
 const VERSIONER_API_URL = "https://www.ecfr.gov/api/versioner/v1";
@@ -18,23 +18,23 @@ const getTitles = async () => {
   const titleFileExists = checkFileExistsAndHasData("titles.json");
 
   if (titleFileExists) {
-    return JSON.parse(readFileSync("data/titles.json", "utf8"));
+    return JSON.parse(fs.readFileSync("data/titles.json", "utf8"));
   }
 
   const response = await axios.get(`${VERSIONER_API_URL}/titles`);
   return JSON.parse(JSON.stringify(response.data, null, 2));
 };
 
-const getAgency = async (name) => {
+const getAgency = async (slug) => {
   const agencyData = await getAgencies();
-  return agencyData.agencies.find((agency) => agency.name === name);
+  return agencyData.agencies.find((agency) => agency.slug === slug);
 };
 
 const getAgencies = async () => {
   const agencyFileExists = await checkFileExistsAndHasData("agencies.json");
 
   if (agencyFileExists) {
-    return JSON.parse(readFileSync("data/agencies.json", "utf8"));
+    return JSON.parse(fs.readFileSync("data/agencies.json", "utf8"));
   }
 
   const response = await axios.get(`${ADMIN_API_URL}/agencies.json`);
@@ -102,31 +102,30 @@ const countWordsInTitleChapter = (title, chapter) => {
   return getWordCountForTitleChapter(xmlPath, chapter);
 };
 
-app.get("/api/word_counts/:agency", async (req, res) => {
-  const { agencyName } = req.params;
-  if (!agencyName) {
+app.get("/api/word_counts/:agencySlug", async (req, res) => {
+  const { agencySlug } = req.params;
+  if (!agencySlug) {
     return res
       .status(400)
-      .json({ error: "Bad Request: Please provide an Agency name" });
+      .json({ error: "Bad Request: Please provide an Agency Slug" });
   }
 
-  const agency = await getAgency(agencyName);
+  const agency = await getAgency(agencySlug);
   if (!agency) {
     return res.status(404).json({
-      error: "Agency Not Found",
+      error: "Agency with Slug Not Found...",
     });
   }
 
   let totalWordCount = 0;
-  for (ref of agency.cfr_references) {
+
+  for (const ref of agency.cfr_references) {
     if (ref && ref.title && ref.chapter) {
-      totalWordCount += countWordsInTitleChapter(ref.title, ref.chapter);
+      totalWordCount += await countWordsInTitleChapter(ref.title, ref.chapter);
     }
   }
 
   res.json({
-    agency: { ...agency },
-    cfr: { ...agencyCFRList },
     wordCount: totalWordCount,
   });
 });
