@@ -5,7 +5,7 @@ import axios from "axios";
 import { readFileSync, writeFileSync, promises as fs } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
-import { findChapter } from "./utils/find_chapter_in_xml";
+import { getWordCountForTitleChapter } from "./utils/xml-utils";
 
 const ADMIN_API_URL = "https://www.ecfr.gov/api/admin/v1";
 const VERSIONER_API_URL = "https://www.ecfr.gov/api/versioner/v1";
@@ -92,15 +92,14 @@ const getCfrUsingAgency = async (agency) => {
   });
 };
 
-const getWordCountForTitle = (title, chapter) => {
+const countWordsInTitleChapter = (title, chapter) => {
   const titleXML = `ecfr/title-${title.number}`;
   if (!checkFileExistsAndHasData(titleXML)) {
     return 0;
   }
 
   const xmlPath = `data/ecfr/title-${title.number}.xml`;
-
-  return findChapter(xmlPath, chapter);
+  return getWordCountForTitleChapter(xmlPath, chapter);
 };
 
 app.get("/api/word_counts/:agency", async (req, res) => {
@@ -118,9 +117,12 @@ app.get("/api/word_counts/:agency", async (req, res) => {
     });
   }
 
-  const agencyCFRList = await getCfrUsingAgency(agency);
-
   let totalWordCount = 0;
+  for (ref of agency.cfr_references) {
+    if (ref && ref.title && ref.chapter) {
+      totalWordCount += countWordsInTitleChapter(ref.title, ref.chapter);
+    }
+  }
 
   res.json({
     agency: { ...agency },
