@@ -24,6 +24,7 @@ export const getWordCountForTitleChapter = async (
   }
 
   let totalWords = 0;
+
   const extractText = (node) => {
     if (typeof node === "string") {
       totalWords += node.match(/\b\w+\b/g)?.length || 0;
