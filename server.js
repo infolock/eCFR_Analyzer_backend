@@ -10,6 +10,7 @@ const VERSIONER_API_URL = "https://www.ecfr.gov/api/versioner/v1";
 const app = express();
 
 const allowedOrigins = [
+  "http://localhost:3000",
   "https://ecfranalyzerfrontend-production.up.railway.app",
 ];
 
