@@ -99,3 +99,5 @@ const download = async (currentRetry = 0) => {
     await download(currentRetry + 1);
   }, 5000);
 };
+
+download();

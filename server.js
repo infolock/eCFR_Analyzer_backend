@@ -3,7 +3,6 @@ import cors from "cors";
 import axios from "axios";
 import fs from "fs";
 import { getWordCountForTitleChapter } from "./utils/xml-utils.js";
-import { download } from "utils/fetch-data";
 
 const ADMIN_API_URL = "https://www.ecfr.gov/api/admin/v1";
 const VERSIONER_API_URL = "https://www.ecfr.gov/api/versioner/v1";
@@ -11,8 +10,6 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-download();
 
 const getTitles = async () => {
   const titleFileExists = fs.existsSync("./data/titles.json");
