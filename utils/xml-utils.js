@@ -19,28 +19,20 @@ export const getWordCountForTitleChapter = async (
   chapterNumber
 ) => {
   const chapter = await findChapter(xmlFilePath, chapterNumber);
-
   if (!chapter) {
     return 0;
   }
 
   let totalWords = 0;
-
-  const extractText = (element) => {
-    if (typeof element === "string") {
-      totalWords += element.split(/\s+/).length;
-    } else if (Array.isArray(element)) {
-      element.forEach(extractText);
+  const extractText = (node) => {
+    if (typeof node === "string") {
+      totalWords += node.match(/\b\w+\b/g)?.length || 0;
+    } else if (typeof node === "object") {
+      Object.values(node).forEach(extractText);
     }
   };
 
-  if (chapter.HEAD) {
-    extractText(chapter.HEAD);
-  }
-
-  if (chapter.P) {
-    extractText(chapter.P);
-  }
+  extractText(chapter);
 
   return totalWords;
 };

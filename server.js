@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 const getTitles = async () => {
-  const titleFileExists = checkFileExistsAndHasData("titles.json");
+  const titleFileExists = fs.existsSync("./data/titles.json");
 
   if (titleFileExists) {
     return JSON.parse(fs.readFileSync("data/titles.json", "utf8"));
@@ -31,7 +31,7 @@ const getAgency = async (slug) => {
 };
 
 const getAgencies = async () => {
-  const agencyFileExists = await checkFileExistsAndHasData("agencies.json");
+  const agencyFileExists = await fs.existsSync("./data/agencies.json");
 
   if (agencyFileExists) {
     return JSON.parse(fs.readFileSync("data/agencies.json", "utf8"));
@@ -39,12 +39,6 @@ const getAgencies = async () => {
 
   const response = await axios.get(`${ADMIN_API_URL}/agencies.json`);
   return JSON.parse(JSON.stringify(response.data, null, 2));
-};
-
-const checkFileExistsAndHasData = (filename = "titles.json") => {
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-  const filePath = join(__dirname, "data", filename);
-  return fs.existsSync(filePath);
 };
 
 app.get("/api/agencies", async (_, res) => {
@@ -92,13 +86,13 @@ const getCfrUsingAgency = async (agency) => {
   });
 };
 
-const countWordsInTitleChapter = (title, chapter) => {
-  const titleXML = `ecfr/title-${title.number}`;
-  if (!checkFileExistsAndHasData(titleXML)) {
+const countWordsInTitleChapter = (titleNumber, chapter) => {
+  const xmlPath = `./data/ecfr/title-${titleNumber}.xml`;
+  if (!fs.existsSync(xmlPath)) {
+    console.log("File doesn't exist! File: " + xmlPath);
     return 0;
   }
 
-  const xmlPath = `data/ecfr/title-${title.number}.xml`;
   return getWordCountForTitleChapter(xmlPath, chapter);
 };
 
@@ -121,6 +115,7 @@ app.get("/api/word_counts/:agencySlug", async (req, res) => {
 
   for (const ref of agency.cfr_references) {
     if (ref && ref.title && ref.chapter) {
+      console.log("Working with ref: ", ref);
       totalWordCount += await countWordsInTitleChapter(ref.title, ref.chapter);
     }
   }
