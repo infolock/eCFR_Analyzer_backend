@@ -1,16 +1,16 @@
 import fs from "fs";
+import { parseStringPromise } from "xml2js";
 
 export const findChapter = async (xmlFilePath, chapterNumber) => {
-  const xmlData = fs.readFileSync(xmlFilePath, "utf8");
-  const chapterRegex = new RegExp(
-    `<DIV3 N="${chapterNumber}" TYPE="CHAPTER">([\s\S]*?)<\/DIV3>`,
-    "g"
-  );
+  try {
+    const xmlData = fs.readFileSync(xmlFilePath, "utf8");
+    const jsonData = await parseStringPromise(xmlData);
+    const chapters = jsonData?.ECFR?.DIV1?.[0]?.DIV3 || [];
+    const matchingChapter = chapters.find((ch) => ch["$"].N === chapterNumber);
 
-  const match = chapterRegex.exec(xmlData);
-
-  if (match) {
-    return match[1];
+    return matchingChapter;
+  } catch (error) {
+    console.error("Error searching for chapter:", error);
   }
 };
 
@@ -18,18 +18,22 @@ export const getWordCountForTitleChapter = async (
   xmlFilePath,
   chapterNumber
 ) => {
-  let chapterText = await findChapter(xmlFilePath, chapterNumber);
-
-  if (!chapterText) {
+  const chapter = await findChapter(xmlFilePath, chapterNumber);
+  if (!chapter) {
     return 0;
   }
 
-  chapterText = chapterText.replace(/<[^>]+>/g, "");
-  chapterText = chapterText.replace(/\n{2,}/g, "\n").trim();
+  let totalWords = 0;
 
-  const wordCount = chapterText
-    .split(/\s+/)
-    .filter((word) => word.trim().length > 0).length;
+  const extractText = (node) => {
+    if (typeof node === "string") {
+      totalWords += node.match(/\b\w+\b/g)?.length || 0;
+    } else if (typeof node === "object") {
+      Object.values(node).forEach(extractText);
+    }
+  };
 
-  return wordCount;
+  extractText(chapter);
+
+  return totalWords;
 };
