@@ -142,7 +142,10 @@ app.get("/api/word_counts/:agencySlug", async (req, res) => {
 
   for (const ref of agency.cfr_references) {
     if (ref && ref.title && ref.chapter) {
-      totalWordCount += await countWordsInTitleChapter(ref.title, ref.chapter);
+      let count = await countWordsInTitleChapter(ref.title, ref.chapter);
+      console.log("Count = " + count);
+      console.log("Typeof Count = " + typeof count);
+      totalWordCount += parseInt(count, 10);
     }
   }
 
