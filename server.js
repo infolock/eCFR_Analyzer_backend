@@ -6,15 +6,28 @@ import { getWordCountForTitleChapter } from "./utils/xml-utils.js";
 
 const ADMIN_API_URL = "https://www.ecfr.gov/api/admin/v1";
 const VERSIONER_API_URL = "https://www.ecfr.gov/api/versioner/v1";
+
 const app = express();
+
+const allowedOrigins = [
+  "https://ecfranalyzerfrontend-production.up.railway.app",
+];
 
 app.use(
   cors({
-    origin: "https://ecfranalyzerfrontend-production.up.railway.app/",
-    methods: ["GET", "OPTIONS"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 app.use(express.json());
 
 const getTitles = async () => {
