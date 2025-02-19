@@ -2,3 +2,4 @@ node_modules
 .DS_Store
 data/.DS_Store
 data/ecfr/*.xml
+data/word_count/*.txt
