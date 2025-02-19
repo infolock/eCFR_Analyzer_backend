@@ -104,12 +104,6 @@ const getCfrUsingAgency = async (agency) => {
 };
 
 const countWordsInTitleChapter = async (titleNumber, chapter) => {
-  const countPath = `./data/word_count/title-${titleNumber}.txt`;
-
-  if (fs.existsSync(countPath)) {
-    return fs.readFileSync(countPath);
-  }
-
   const xmlPath = `./data/ecfr/title-${titleNumber}.xml`;
   if (!fs.existsSync(xmlPath)) {
     console.log("File doesn't exist! File: " + xmlPath);
@@ -117,8 +111,6 @@ const countWordsInTitleChapter = async (titleNumber, chapter) => {
   }
 
   const totalCount = await getWordCountForTitleChapter(xmlPath, chapter);
-
-  fs.writeFileSync(countPath, `${totalCount}`);
 
   return totalCount;
 };
@@ -143,8 +135,7 @@ app.get("/api/word_counts/:agencySlug", async (req, res) => {
   for (const ref of agency.cfr_references) {
     if (ref && ref.title && ref.chapter) {
       let count = await countWordsInTitleChapter(ref.title, ref.chapter);
-      console.log("Count = " + count);
-      console.log("Typeof Count = " + typeof count);
+
       totalWordCount += parseInt(count, 10);
     }
   }
