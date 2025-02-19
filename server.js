@@ -8,7 +8,13 @@ const ADMIN_API_URL = "https://www.ecfr.gov/api/admin/v1";
 const VERSIONER_API_URL = "https://www.ecfr.gov/api/versioner/v1";
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://ecfranalyzerfrontend-production.up.railway.app/",
+    methods: ["GET", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 
 const getTitles = async () => {
