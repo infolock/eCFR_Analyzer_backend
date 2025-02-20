@@ -124,14 +124,12 @@ app.get("/api/word_counts/:agencySlug", async (req, res) => {
       }
 
       parseChapterFromXML(xmlData, ref.chapter, (result) => {
-        console.log("counting words...");
         const words = result.split(/\s+/).filter((word) => word !== "");
         totalWordCount += words.length;
       });
     }
   }
 
-  console.log("response being sent...");
   res.json({
     wordCount: totalWordCount,
   });
