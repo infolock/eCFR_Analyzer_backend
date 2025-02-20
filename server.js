@@ -86,6 +86,15 @@ app.get("/api/titles", async (_, res) => {
   res.json(titles.titles);
 });
 
+/**
+ * This guy is the nuts and bolts for obtaining counts.
+ *
+ * Originally, i was just caching the results and parsing the xmls.
+ * The cheap server environment i chose won't let me write to its filesystem,
+ * so i'm being forced to query this slow, throttled endpoint service.
+ *
+ * To combat that... the frontend will have to control how often we query.
+ */
 app.get("/api/word_counts/:agencySlug", async (req, res) => {
   const { agencySlug } = req.params;
   if (!agencySlug) {
