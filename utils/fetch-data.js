@@ -12,7 +12,7 @@ const checkFileExistsAndHasData = (filename = "titles.json") => {
   return fs.existsSync(filePath);
 };
 
-const getTitles = async () => {
+export const getTitles = async () => {
   try {
     const titleFileExists = checkFileExistsAndHasData("titles.json");
     if (titleFileExists) {
@@ -32,13 +32,13 @@ const getTitles = async () => {
   }
 };
 
-const fetchTitleContent = async (titleNumber, date = "2025-02-10") => {
+export const fetchTitleContent = async (titleNumber, date = "2025-02-10") => {
   const url = `${API_URL}/full/${date}/title-${titleNumber}.xml`;
   const response = await axios.get(url);
   return response.data;
 };
 
-const fetchData = async () => {
+export const fetchData = async () => {
   const retryQueue = [];
 
   console.log("Fetching titles...");

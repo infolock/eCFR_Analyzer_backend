@@ -2,7 +2,8 @@ import express from "express";
 import cors from "cors";
 import axios from "axios";
 import fs from "fs";
-import { getWordCountForTitleChapter } from "./utils/xml-utils.js";
+import { fetchTitleContent } from "./utils/fetch-data.js";
+import { parseChapterFromXML } from "./utils/parse_xml.js";
 
 const ADMIN_API_URL = "https://www.ecfr.gov/api/admin/v1";
 const VERSIONER_API_URL = "https://www.ecfr.gov/api/versioner/v1";
@@ -85,36 +86,6 @@ app.get("/api/titles", async (_, res) => {
   res.json(titles.titles);
 });
 
-const getCfrUsingAgency = async (agency) => {
-  const agencyTitles = agency.cfr_references;
-  const titleData = await getTitles();
-
-  return agencyTitles.map((agencyTitle) => {
-    const titleInfo = titleData.find(
-      (title) => title.number === agencyTitle.title
-    );
-
-    if (titleInfo) {
-      return {
-        cfr_references: { ...agencyTitle },
-        title: { ...titleInfo },
-      };
-    }
-  });
-};
-
-const countWordsInTitleChapter = async (titleNumber, chapter) => {
-  const xmlPath = `./data/ecfr/title-${titleNumber}.xml`;
-  if (!fs.existsSync(xmlPath)) {
-    console.log("File doesn't exist! File: " + xmlPath);
-    return 0;
-  }
-
-  const totalCount = await getWordCountForTitleChapter(xmlPath, chapter);
-
-  return totalCount;
-};
-
 app.get("/api/word_counts/:agencySlug", async (req, res) => {
   const { agencySlug } = req.params;
   if (!agencySlug) {
@@ -131,15 +102,36 @@ app.get("/api/word_counts/:agencySlug", async (req, res) => {
   }
 
   let totalWordCount = 0;
+  const titleData = await getTitles();
 
   for (const ref of agency.cfr_references) {
     if (ref && ref.title && ref.chapter) {
-      let count = await countWordsInTitleChapter(ref.title, ref.chapter);
+      const agencyTitle = titleData.titles.find(
+        (title) => title.number === ref.title
+      );
 
-      totalWordCount += parseInt(count, 10);
+      if (!agencyTitle) {
+        continue;
+      }
+
+      const xmlData = await fetchTitleContent(
+        agencyTitle.number,
+        agencyTitle.up_to_date_as_of
+      );
+
+      if (!xmlData) {
+        continue;
+      }
+
+      parseChapterFromXML(xmlData, ref.chapter, (result) => {
+        console.log("counting words...");
+        const words = result.split(/\s+/).filter((word) => word !== "");
+        totalWordCount += words.length;
+      });
     }
   }
 
+  console.log("response being sent...");
   res.json({
     wordCount: totalWordCount,
   });
