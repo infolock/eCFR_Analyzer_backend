@@ -89,6 +89,7 @@ export const parseChapterFromXML = (
 
   const temp = xmlData.split(OPENING_CHAPTER_REGEX);
   const actualNum = romanToInteger(chapter);
+
   let computed = temp[0];
   computed += `<DIV3 N="${chapter}" TYPE="CHAPTER">`;
   computed += temp[actualNum];
