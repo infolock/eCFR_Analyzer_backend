@@ -92,7 +92,11 @@ export const parseChapterFromXML = (
   let computed = temp[0];
   computed += `<DIV3 N="${chapter}" TYPE="CHAPTER">`;
   computed += temp[actualNum];
-  computed += `</DIV1></ECFR>`;
+
+  // don't need this with the last section
+  if (actualNum !== temp.length - 1) {
+    computed += `</DIV1></ECFR>`;
+  }
 
   const parser = new xml2js.Parser();
 
