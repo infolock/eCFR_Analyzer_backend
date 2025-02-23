@@ -96,52 +96,62 @@ app.get("/api/titles", async (_, res) => {
  * To combat that... the frontend will have to control how often we query.
  */
 app.get("/api/word_counts/:agencySlug", async (req, res) => {
-  const { agencySlug } = req.params;
-  if (!agencySlug) {
-    return res
-      .status(400)
-      .json({ error: "Bad Request: Please provide an Agency Slug" });
-  }
+  try {
+    const { agencySlug } = req.params;
+    if (!agencySlug) {
+      return res
+        .status(400)
+        .json({ error: "Bad Request: Please provide an Agency Slug" });
+    }
 
-  const agency = await getAgency(agencySlug);
-  if (!agency) {
-    return res.status(404).json({
-      error: "Agency with Slug Not Found...",
-    });
-  }
-
-  let totalWordCount = 0;
-  const titleData = await getTitles();
-
-  for (const ref of agency.cfr_references) {
-    if (ref && ref.title && ref.chapter) {
-      const agencyTitle = titleData.titles.find(
-        (title) => title.number === ref.title
-      );
-
-      if (!agencyTitle) {
-        continue;
-      }
-
-      const xmlData = await fetchTitleContent(
-        agencyTitle.number,
-        agencyTitle.up_to_date_as_of
-      );
-
-      if (!xmlData) {
-        continue;
-      }
-
-      parseChapterFromXML(xmlData, ref.chapter, (result) => {
-        const words = result.split(/\s+/).filter((word) => word !== "");
-        totalWordCount += words.length;
+    const agency = await getAgency(agencySlug);
+    if (!agency) {
+      return res.status(404).json({
+        error: "Agency with Slug Not Found...",
       });
     }
-  }
 
-  res.json({
-    wordCount: totalWordCount,
-  });
+    let totalWordCount = 0;
+    const titleData = await getTitles();
+
+    for (const ref of agency.cfr_references) {
+      if (ref && ref.title && ref.chapter) {
+        const agencyTitle = titleData.titles.find(
+          (title) => title.number === ref.title
+        );
+
+        if (!agencyTitle) {
+          continue;
+        }
+
+        const xmlData = await fetchTitleContent(
+          agencyTitle.number,
+          agencyTitle.up_to_date_as_of
+        );
+
+        if (!xmlData) {
+          continue;
+        }
+
+        parseChapterFromXML(xmlData, ref.chapter, (result) => {
+          const words = result.split(/\s+/).filter((word) => word !== "");
+          totalWordCount += words.length;
+        });
+      }
+    }
+
+    res.json({
+      wordCount: totalWordCount,
+    });
+  } catch (error) {
+    console.log("Failed To fetch agency slug data!  Error:");
+    console.log(error);
+
+    return res.status(400).json({
+      error: "Error: Agency Slug failed to fetch.  Please try again later.",
+      message: JSON.stringify(error),
+    });
+  }
 });
 
 const PORT = process.env.PORT || 5001;
